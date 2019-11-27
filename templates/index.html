@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Portfolio
+{% endblock %}
+
+{% block main %}
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Symbol</th>
+          <th scope="col">Name</th>
+          <th scope="col">Shares</th>
+          <th scope="col">Price</th>
+          <th scope="col">TOTAL</th>
+          <th scope="col">Buy/Sell Shares</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in symbols_with_stock %}
+        <tr>
+          <td>{{ item["symbol"] }}</td>
+          <td>{{ item["name"] }}</td>
+          <td>{{ item["shares"] }}</td>
+          <td>{{ item["price"] | usd }}</td>
+          <td>{{ item["total"] | usd }}</td>
+          <td>
+            <form id="{{ item["symbol"] }}" method="post" onsubmit="onsubmitform(this.id);">
+              <input type="hidden" name="symbol" value={{ item["symbol"] }}>
+              <input class="form-control" type="number" name="shares" min="1" placeholder="Shares">
+              <input class="form-control" type="submit" name="buy" value="Buy" onclick="document.pressed=this.value">
+              <input class="form-control" type="submit" name="sell" value="Sell" onclick="document.pressed=this.value">
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+        {% if symbols_with_stock %}
+        <tr>
+          <td>CASH</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>{{ cash | usd }}</td>
+          <td></td>
+        </tr>
+        {% endif %}
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><b>{{ grand_total | usd}}</b></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <script>
+      function onsubmitform(form_id){
+
+        if(document.pressed == 'Buy')
+        {
+          document.querySelector("#"+form_id).action="/buy";
+        }
+        else
+        if(document.pressed == 'Sell')
+        {
+          document.querySelector("#"+form_id).action="/sell";
+        }
+        return true;
+      }
+    </script>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "layout_login.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block main %}
+    <form action="/register" method="post">
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="username" id= "username" placeholder="Username" type="text">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="password" id= "password" placeholder="Password" type="password">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="confirmation" id="confirmation" placeholder="Password (again)" type="password">
+        </div>
+        <button class="btn btn-primary" type="submit">Register</button>
+    </form>
+
+    <!-- Javascript for validation of form -->
+    <script>
+        // Upon submitting form
+        document.querySelector('form').onsubmit = function(event){
+            // Prevent form submission
+            event.preventDefault();
+
+            // Check every field is completed and password matches confirmation password
+            if (!document.querySelector('#username').value || !document.querySelector('#password').value || !document.querySelector('#confirmation').value){
+                alert('Every field must be filled in');
+                return;
+            }
+            if (document.querySelector('#password').value != document.querySelector('#confirmation').value){
+                alert('Password and repeated password do not match');
+                return;
+            }
+
+            // Check if username free
+            $.get('/check?username=' + document.querySelector('#username').value, function(data){
+                // If username taken, alert to this fact
+                if (data==false){
+                    alert('Username already taken');
+                    return;
+                }
+                // Else submit form
+                else
+                {
+                    document.querySelector('form').submit();
+                }
+            });
+        };
+    </script>
+{% endblock %}
